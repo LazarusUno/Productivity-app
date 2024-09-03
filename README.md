@@ -1,6 +1,6 @@
 # Productivity Web App
 
-Welcome to the **Productivity Web App** project! This web application is designed to help users manage their tasks, set goals, and track their progress effectively. The app is built with React, Shadcn UI, Tailwind CSS, and uses React Router for navigation.
+Welcome to the **Productivity Web App** project! This web application is made by EfuyeGela Interns. it is designed to help users manage their tasks, set goals, and track their progress effectively.
 
 
 - Task Management: Create, update, and delete tasks.
