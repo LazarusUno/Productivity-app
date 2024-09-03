@@ -24,6 +24,7 @@ To run this project locally, you need to have the following installed:
     ```bash
     git clone https://github.com/your-username/productivity-web-app.git
     cd productivity-web-app
+    cd frontend
     ```
 
 2. **Install dependencies:**
