@@ -4,7 +4,7 @@
 ```markdown
 # Contributing to Productivity Web App
 
-Thank you for considering contributing to the **Productivity Web App**! We welcome contributions from everyone. Here’s how you can help:
+Thank you for considering contributing to the **Productivity Web App**! Here’s how you can start:
 
 ## How to Contribute
 
@@ -24,11 +24,7 @@ Thank you for considering contributing to the **Productivity Web App**! We welco
 
 4. **Make your changes**: Implement your feature or bug fix in your new branch.
 
-5. **Run tests**: Ensure your changes do not break existing functionality.
-
-    ```bash
-    npm test
-    ```
+5. Ensure your changes do not break existing functionality.
 
 6. **Commit your changes**: Use clear and descriptive commit messages.
 
@@ -44,15 +40,6 @@ Thank you for considering contributing to the **Productivity Web App**! We welco
 
 8. **Create a Pull Request**: Go to the original repository on GitHub, and you should see a “Compare & pull request” button. Click it and submit your pull request for review.
 
-## Code of Conduct
-
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.
-
-## Style Guide
-
-- **Code Formatting**: Use Prettier for code formatting. Please run `npm run format` before committing your changes.
-- **Linting**: This project uses ESLint to maintain code quality. Make sure your code passes all lint checks by running `npm run lint`.
-
 ## Branching and Commit Messages
 
 - **Branch Naming**: Use the format `feature/feature-name` for new features and `bugfix/bug-description` for bug fixes.
@@ -64,6 +51,6 @@ If you find a bug or have a suggestion for a new feature, please open an issue o
 
 ## Need Help?
 
-If you need any help, feel free to reach out to the project maintainers. You can also ask questions by opening an issue on GitHub.
+If you need any help, feel free to reach out. You can also ask questions by opening an issue on GitHub.
 
-Thank you for your contributions!
+Thank you!
