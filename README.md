@@ -2,22 +2,10 @@
 
 Welcome to the **Productivity Web App** project! This web application is designed to help users manage their tasks, set goals, and track their progress effectively. The app is built with React, Shadcn UI, Tailwind CSS, and uses React Router for navigation.
 
-## Table of Contents
-
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the App](#running-the-app)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Features
 
 - Task Management: Create, update, and delete tasks.
 - Goal Setting: Set personal or team goals.
-- Progress Tracking: Visualize progress over time with charts.
+- Streak: stay consistant
 - Responsive Design: Works well on both desktop and mobile devices.
 
 ## Getting Started
@@ -49,4 +37,4 @@ To run this project locally, you need to have the following installed:
 To start the development server, run:
 
 ```bash
-npm start
+npm run dev
