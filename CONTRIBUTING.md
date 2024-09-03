@@ -1,7 +1,7 @@
 
 ### **CONTRIBUTING.md**
 
-```markdown
+
 # Contributing to Productivity Web App
 
 Thank you for considering contributing to the **Productivity Web App**! Here’s how you can start:
@@ -36,21 +36,19 @@ This repository is structured as follows:
 
 4. **Make your changes**: Implement your feature or bug fix in your new branch.
 
-5. Ensure your changes do not break existing functionality.
-
-6. **Commit your changes**: Use clear and descriptive commit messages.
+5. **Commit your changes**: Use clear and descriptive commit messages.
 
     ```bash
     git commit -m "Add detailed description of your changes here"
     ```
 
-7. **Push your branch**: Push your changes to your forked repository.
+6. **Push your branch**: Push your changes to your forked repository.
 
     ```bash
     git push origin feature/your-feature-name
     ```
 
-8. **Create a Pull Request**: Go to the original repository on GitHub, and you should see a “Compare & pull request” button. Click it and submit your pull request for review.
+7. **Create a Pull Request**: Go to the original repository on GitHub, and you should see a “Compare & pull request” button. Click it and submit your pull request for review.
 
 ## Branching and Commit Messages
 
@@ -66,3 +64,4 @@ If you find a bug or have a suggestion for a new feature, please open an issue o
 If you need any help, feel free to reach out. You can also ask questions by opening an issue on GitHub.
 
 Thank you!
+
