@@ -6,6 +6,18 @@
 
 Thank you for considering contributing to the **Productivity Web App**! Here’s how you can start:
 
+## Structure
+
+This repository is structured as follows:
+
+
+
+| Path                  | Description                              |
+| --------------------- | ---------------------------------------- |
+| `src/pages`       | The page components for the website. |
+| `src/componets/ui`       | Shadcn-ui reusable components. |
+| `src/components` | The React components for the website.    |
+
 ## How to Contribute
 
 1. **Fork the repository**: Click the "Fork" button at the top right of this page to create a copy of this repository under your GitHub account.
