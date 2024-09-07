@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Button } from './ui/button'
+import { Link, Outlet } from 'react-router-dom'
 const Sidebar = () => {
+
     return (
-        <div className='hidden border-r bg-muted/40 lg:block'>
+
+        <div className=' border-r bg-muted/40 lg:block'>
             <div className='flex h-full max-h-screen flex-col gap-2'>
                 <div className='flex h-[60px] items-center border-b px-6'>
-                    <a href="#" className='flex items-center gap-2 font-semibold'>
+                    <Link to="/" className='flex items-center gap-2 font-semibold'>
                         <CalendarIcon className="h-6 w-6" />
                         <span>Productivity</span>
-                    </a>
+                    </Link>
                     <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                         <BellIcon className='h-4' w-4 />
                         <span className='sr-only'>Toggle notification</span>
@@ -17,42 +20,39 @@ const Sidebar = () => {
                 </div>
                 <div className="flex-1 overflow-auto py-2">
                     <nav className="grid items-start px-6 text-sm font-medium">
-                        <a
-                            href="#"
+                        <Link
+                            to="/"
                             className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-                            prefetch={false}
                         >
                             <ListIcon className="h-4 w-4" />
                             Tasks
-                        </a>
-                        <a
-                            href="#"
+                        </Link>
+                        <Link
+                            to="/ranks"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                            prefetch={false}
                         >
                             <TrophyIcon className="h-4 w-4" />
                             Ranks
-                        </a>
-                        <a
-                            href="#"
+                        </Link>
+                        <Link
+                            to="/dashboard/streak"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                            prefetch={false}
                         >
                             <FlameIcon className="h-4 w-4" />
                             Streaks
-                        </a>
-                        <a
-                            href="#"
+                        </Link>
+                        <Link
+                            to="/settings"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                            prefetch={false}
                         >
                             <SettingsIcon className="h-4 w-4" />
                             Settings
-                        </a>
+                        </Link>
                     </nav>
                 </div>
             </div>
         </div>
+
     )
 }
 function BellIcon(props) {
