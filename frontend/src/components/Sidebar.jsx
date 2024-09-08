@@ -28,11 +28,11 @@ const Sidebar = () => {
                             Tasks
                         </Link>
                         <Link
-                            to="/ranks"
+                            to="/dashboard/social"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                         >
                             <TrophyIcon className="h-4 w-4" />
-                            Ranks
+                            Social
                         </Link>
                         <Link
                             to="/dashboard/streak"
