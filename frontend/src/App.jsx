@@ -15,7 +15,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="signup" element={<SigninPage />} />
         <Route path="login" element={<SigninPage />} />
-        <Route path="dashboard" element={<DashboardPage />}>
+        <Route path="https://productivity-nhx6kfvd1-milkiyas-webs-projects.vercel.app/dashboard" element={<DashboardPage />}>
           <Route index element={<TasksList />} />
           <Route path="social" element={<Social />} />
           <Route path="streak" element={<Streak />} />
