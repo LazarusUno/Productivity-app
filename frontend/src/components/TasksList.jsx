@@ -4,6 +4,10 @@ import { Badge } from "./ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Checkbox } from './ui/checkbox'
 import { ListTodo, Trophy, Flame, Settings, Plus, Play, Menu } from 'lucide-react'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
+import { Label } from './ui/label'
+import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
 
 const initialTasks = [
     { id: 1, name: "Complete project proposal", description: "Write and review the Q3 project proposal", timeEstimate: "2 hours" },
@@ -13,11 +17,12 @@ const initialTasks = [
 
 const TasksList = () => {
     const [tasks, setTasks] = useState(initialTasks)
+    const [isModalOpen, setIsModalOpen] = useState(false)
     return (
         <main className='flex-1 overflow-auto p-4 md:p-6'>
             <div className='grid gird-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
                 <div className='flex h-[230px] items-center justify-center rounded-lg bg-muted/20 transition-colors hover:bg-muted/30 border-2 border-dotted'>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(true)}>
                         <PlusIcon className="h-6 w-6" />
                         <span className='sr-only'>Add Task</span>
                     </Button>
@@ -42,7 +47,41 @@ const TasksList = () => {
                 ))}
 
             </div>
-            
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Add New Task</DialogTitle>
+                        <DialogDescription>Fill out the details for your new task.</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid items-center grid-cols-4 gap-4">
+                            <Label htmlFor="task-name" className="text-right">
+                                Task Name
+                            </Label>
+                            <Input id="task-name" placeholder="Enter task name" className="col-span-3" />
+                        </div>
+                        <div className="grid items-center grid-cols-4 gap-4">
+                            <Label htmlFor="task-description" className="text-right">
+                                Description
+                            </Label>
+                            <Textarea id="task-description" placeholder="Enter task description" className="col-span-3" />
+                        </div>
+                        <div className="grid items-center grid-cols-4 gap-4">
+                            <Label htmlFor="task-duration" className="text-right">
+                                Duration
+                            </Label>
+                            <Input id="task-duration" type="number" placeholder="Enter duration in minutes" className="col-span-3" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Save Task</Button>
+                        <div>
+                            <Button variant="outline">Cancel</Button>
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </main>
     )
 }
