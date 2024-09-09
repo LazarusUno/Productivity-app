@@ -15,16 +15,15 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="signup" element={<SigninPage />} />
         <Route path="login" element={<SigninPage />} />
-        <Route path="https://productivity-nhx6kfvd1-milkiyas-webs-projects.vercel.app/dashboard" element={<DashboardPage />}>
+        <Route path="dashboard" element={<DashboardPage />}>
           <Route index element={<TasksList />} />
           <Route path="social" element={<Social />} />
           <Route path="streak" element={<Streak />} />
         </Route>
-        <Route path="*" element={<NoPage />} />
+        {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </BrowserRouter>
   )
 }
-
 
 export default App
