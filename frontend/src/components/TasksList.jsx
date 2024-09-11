@@ -9,6 +9,7 @@ import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 
+import { useTaskStore } from '@/stores/useTaskStore'
 const initialTasks = [
     { id: 1, name: "Complete project proposal", description: "Write and review the Q3 project proposal", timeEstimate: "2 hours" },
     { id: 2, name: "Team meeting", description: "Weekly team sync-uppppppppppppppppppp", timeEstimate: "1 hour" },
@@ -18,6 +19,24 @@ const initialTasks = [
 const TasksList = () => {
     const [tasks, setTasks] = useState(initialTasks)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [newTask, setNewTask] = useState({
+        name: "",
+        description: "",
+        category: "",
+        duration: "",
+    });
+    const { createTask, loading } = useTaskStore();
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            console.log("clicked")
+            await createTask(newTask);
+            setNewTask({ name: "", description: "", category: "", duration: "" });
+        } catch (error) {
+            console.log("error creating task", error);
+        }
+
+    }
     return (
         <main className='flex-1 overflow-auto p-4 md:p-6'>
             <div className='grid gird-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
@@ -47,40 +66,48 @@ const TasksList = () => {
                 ))}
 
             </div>
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Add New Task</DialogTitle>
-                        <DialogDescription>Fill out the details for your new task.</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="task-name" className="text-right">
-                                Task Name
-                            </Label>
-                            <Input id="task-name" placeholder="Enter task name" className="col-span-3" />
+            <form onSubmit={handleSubmit}>
+                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Add New Task</DialogTitle>
+                            <DialogDescription>Fill out the details for your new task.</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid items-center grid-cols-4 gap-4">
+                                <Label htmlFor="task-name" className="text-right">
+                                    Task Name
+                                </Label>
+                                <Input value={newTask.name} onChange={(e) => setNewTask({ ...newTask, name: e.target.value })} id="task-name" placeholder="Enter task name" className="col-span-3" />
+                            </div>
+                            <div className="grid items-center grid-cols-4 gap-4">
+                                <Label htmlFor="task-description" className="text-right">
+                                    Description
+                                </Label>
+                                <Textarea value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} id="task-description" placeholder="Enter task description" className="col-span-3" />
+                            </div>
+                            <div className="grid items-center grid-cols-4 gap-4">
+                                <Label htmlFor="task-duration" className="text-right">
+                                    Duration
+                                </Label>
+                                <Input value={newTask.duration} onChange={(e) => setNewTask({ ...newTask, duration: e.target.value })} id="task-duration" type="number" placeholder="Enter duration in minutes" className="col-span-3" />
+                            </div>
+                            <div className="grid items-center grid-cols-4 gap-4">
+                                <Label htmlFor="task-category" className="text-right">
+                                    Task Category
+                                </Label>
+                                <Input value={newTask.category} onChange={(e) => setNewTask({ ...newTask, category: e.target.value })} id="task-name" placeholder="Enter task name" className="col-span-3" />
+                            </div>
                         </div>
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="task-description" className="text-right">
-                                Description
-                            </Label>
-                            <Textarea id="task-description" placeholder="Enter task description" className="col-span-3" />
-                        </div>
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="task-duration" className="text-right">
-                                Duration
-                            </Label>
-                            <Input id="task-duration" type="number" placeholder="Enter duration in minutes" className="col-span-3" />
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button type="submit">Save Task</Button>
-                        <div>
-                            <Button variant="outline">Cancel</Button>
-                        </div>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                        <DialogFooter>
+                            <Button type="submit">Save Task</Button>
+                            <div>
+                                <Button onClick={handleSubmit} variant="outline">Cancel</Button>
+                            </div>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </form>
 
         </main>
     )

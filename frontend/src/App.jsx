@@ -7,13 +7,14 @@ import DashboardPage from './pages/DashboardPage'
 import Social from './pages/Social';
 import Streak from './pages/Streak';
 import TasksList from './components/TasksList';
+import SignupPage from './pages/SignupPage';
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="signup" element={<SigninPage />} />
+        <Route path="signup" element={<SignupPage />} />
         <Route path="login" element={<SigninPage />} />
         <Route path="dashboard" element={<DashboardPage />}>
           <Route index element={<TasksList />} />

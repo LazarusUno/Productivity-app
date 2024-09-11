@@ -1,8 +1,12 @@
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import React from 'react'
 
 const SignupPage = () => {
     return (
-        <div>SignupPage</div>
+        <div>
+            signuppage
+        </div>
     )
 }
 
