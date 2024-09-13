@@ -6,18 +6,19 @@ const taskSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        description: {
+        user: {
             type: String,
             required: true,
         },
-        category: {
+        // category: {
+        //     type: String,
+        //     required: true,
+        // },
+        deadline: {
             type: String,
             required: true,
         },
-        duration: {
-            type: Number,
-            required: true,
-        }
+
     },
     { timestamps: true }
 );

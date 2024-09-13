@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useForm, Controller } from "react-hook-form"
 import { Button } from './ui/button'
 import { Badge } from "./ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
@@ -8,35 +9,44 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
-
-import { useTaskStore } from '@/stores/useTaskStore'
+import axios from '../lib/axios.js'
+import { Form, FormItem, FormLabel, FormMessage } from './ui/form'
 const initialTasks = [
     { id: 1, name: "Complete project proposal", description: "Write and review the Q3 project proposal", timeEstimate: "2 hours" },
     { id: 2, name: "Team meeting", description: "Weekly team sync-uppppppppppppppppppp", timeEstimate: "1 hour" },
     { id: 3, name: "Code review", description: "Review pull requests for the new feature", timeEstimate: "1.5 hours" },
 ]
 
+
+
 const TasksList = () => {
     const [tasks, setTasks] = useState(initialTasks)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [newTask, setNewTask] = useState({
+    const [taskData, setTaskData] = useState({
         name: "",
-        description: "",
-        category: "",
-        duration: "",
+        user: "",
+        deadline: "",
     });
-    const { createTask, loading } = useTaskStore();
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setTaskData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
-            console.log("clicked")
-            await createTask(newTask);
-            setNewTask({ name: "", description: "", category: "", duration: "" });
+            console.log("clicked", taskData);
+            const res = await axios.post("http://localhost:5000/api/tasks", taskData);
+            setTaskData({ name: "", user: "", deadline: "" }); // Reset form
+            setIsModalOpen(false); // Close modal after submitting
         } catch (error) {
             console.log("error creating task", error);
         }
-
-    }
+    };
     return (
         <main className='flex-1 overflow-auto p-4 md:p-6'>
             <div className='grid gird-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
@@ -66,48 +76,57 @@ const TasksList = () => {
                 ))}
 
             </div>
-            <form onSubmit={handleSubmit}>
-                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle>Add New Task</DialogTitle>
-                            <DialogDescription>Fill out the details for your new task.</DialogDescription>
-                        </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid items-center grid-cols-4 gap-4">
-                                <Label htmlFor="task-name" className="text-right">
-                                    Task Name
-                                </Label>
-                                <Input value={newTask.name} onChange={(e) => setNewTask({ ...newTask, name: e.target.value })} id="task-name" placeholder="Enter task name" className="col-span-3" />
-                            </div>
-                            <div className="grid items-center grid-cols-4 gap-4">
-                                <Label htmlFor="task-description" className="text-right">
-                                    Description
-                                </Label>
-                                <Textarea value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} id="task-description" placeholder="Enter task description" className="col-span-3" />
-                            </div>
-                            <div className="grid items-center grid-cols-4 gap-4">
-                                <Label htmlFor="task-duration" className="text-right">
-                                    Duration
-                                </Label>
-                                <Input value={newTask.duration} onChange={(e) => setNewTask({ ...newTask, duration: e.target.value })} id="task-duration" type="number" placeholder="Enter duration in minutes" className="col-span-3" />
-                            </div>
-                            <div className="grid items-center grid-cols-4 gap-4">
-                                <Label htmlFor="task-category" className="text-right">
-                                    Task Category
-                                </Label>
-                                <Input value={newTask.category} onChange={(e) => setNewTask({ ...newTask, category: e.target.value })} id="task-name" placeholder="Enter task name" className="col-span-3" />
-                            </div>
+
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Assign Task</DialogTitle>
+                    </DialogHeader>
+
+                    <form onSubmit={handleSubmit}>
+                        {/* Task Name */}
+                        <div className="mb-4">
+                            <Label htmlFor="name">Task Name</Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                placeholder="Enter task name"
+                                value={taskData.name}
+                                onChange={handleInputChange}
+                            />
                         </div>
+
+                        {/* Assign to User */}
+                        <div className="mb-4">
+                            <Label htmlFor="user">Assign to</Label>
+                            <Input
+                                id="user"
+                                name="user"
+                                placeholder="Enter user email or username"
+                                value={taskData.user}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        {/* Deadline */}
+                        <div className="mb-4">
+                            <Label htmlFor="deadline">Deadline</Label>
+                            <Input
+                                id="deadline"
+                                name="deadline"
+                                // type="date"
+                                value={taskData.deadline}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
                         <DialogFooter>
-                            <Button type="submit">Save Task</Button>
-                            <div>
-                                <Button onClick={handleSubmit} variant="outline">Cancel</Button>
-                            </div>
+                            <Button type="submit" className="bg-green-500 text-white">Assign Task</Button>
                         </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </form>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
 
         </main>
     )
