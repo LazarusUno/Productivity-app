@@ -30,7 +30,8 @@ import {
 import axios from '../lib/axios.js'
 import { Form, FormItem, FormLabel, FormMessage } from './ui/form'
 import { frame } from 'framer-motion'
-const initialTasks = [
+import { useEffect } from 'react'
+const initialProjects = [
     { id: 1, name: "Complete project proposal", description: "Write and review the Q3 project proposal", timeEstimate: "2 hours" },
     { id: 2, name: "Team meeting", description: "Weekly team sync-uppppppppppppppppppp", timeEstimate: "1 hour" },
     { id: 3, name: "Code review", description: "Review pull requests for the new feature", timeEstimate: "1.5 hours" },
@@ -61,18 +62,32 @@ const users = [
 
 
 
-const TasksList = () => {
-    const [tasks, setTasks] = useState(initialTasks)
+const ProjectsList = () => {
+    const [projects, setProjects] = useState(initialProjects)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
-    const [taskData, setTaskData] = useState({
+    const [projectData, setProjectData] = useState({
         name: "",
         description: "",
         deadline: "",
         tag: "",
         user: ""
     });
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const res = await axios.get("http://localhost:5000/api/projects");
+                setProjects(res.data);
+                console.log(res.data)
+
+            } catch (error) {
+                console.log("error fetching projects", error);
+            }
+
+        }
+        fetchProjects();
+    }, [])
     const handleSetValue = (val) => {
         if (value.includes(val)) {
             value.splice(value.indexOf(val), 1);
@@ -83,27 +98,33 @@ const TasksList = () => {
     }
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setTaskData(prevState => ({
+        setProjectData(prevState => ({
             ...prevState,
             [name]: value
         }));
     };
 
+    const truncateDescription = (text, limit) => {
+        if (text.length > limit) {
+            return text.slice(0, limit) + "...";
+        }
+        return text;
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const updatedTaskData = {
-            ...taskData,
+        const updatedProjectData = {
+            ...projectData,
             user: value
         }
         try {
-            console.log("clicked", taskData, updatedTaskData);
-            const res = await axios.post("http://localhost:5000/api/tasks", updatedTaskData);
-            setTaskData({ name: "", user: "", deadline: "", tag: "", description: "" }); // Reset form
+            console.log("clicked", projectData, updatedProjectData);
+            const res = await axios.post("http://localhost:5000/api/projects", updatedProjectData);
+            setProjectData({ name: "", user: "", deadline: "", tag: "", description: "" }); // Reset form
             setValue([]); // Reset form
             setIsModalOpen(false); // Close modal after submitting
         } catch (error) {
-            console.log("error creating task", error);
+            console.log("error creating project", error);
         }
     };
     return (
@@ -112,20 +133,22 @@ const TasksList = () => {
                 <div className='flex h-[230px] items-center justify-center rounded-lg bg-muted/20 transition-colors hover:bg-muted/30 border-2 border-dotted'>
                     <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(true)}>
                         <PlusIcon className="h-6 w-6" />
-                        <span className='sr-only'>Add Task</span>
+                        <span className='sr-only'>Add Project</span>
                     </Button>
                 </div>
-                {tasks.map((task) => (
-                    <Card key={task.id}>
+                {projects.map((project) => (
+                    <Card key={project.id}>
                         <CardHeader className="flex flex-row items-center space-y-0 pb-2 flex-wrap ">
-                            <CardTitle className="text-lg font-semibold flex-1">{task.name}</CardTitle>
-                            <Checkbox id={`task-${task.id}`} />
+                            <CardTitle className="text-lg font-semibold flex-1">{project.name}</CardTitle>
+                            <Checkbox id={`project-${project.id}`} />
                         </CardHeader>
                         <CardContent className="flex-grow">
-                            <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
+                            <p className="text-sm text-muted-foreground mb-2">
+                                {truncateDescription(project.description, 50)}
+                            </p>
                         </CardContent>
                         <CardFooter className="pt-2 flex justify-between  ">
-                            <span className="text-sm font-medium">Est. time: {task.timeEstimate}</span>
+                            <span className="text-sm font-medium">Est. time: {project.timeEstimate}</span>
                             <Button size="sm" variant="outline">
                                 <Play size={16} className="mr-2" />
                                 Start
@@ -139,30 +162,30 @@ const TasksList = () => {
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Create Task</DialogTitle>
+                        <DialogTitle>Create Project</DialogTitle>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit}>
-                        {/* Task Name */}
+                        {/* Project Name */}
                         <div className="mb-4">
-                            <Label htmlFor="name">Task Name</Label>
+                            <Label htmlFor="name">Project Name</Label>
                             <Input
                                 id="name"
                                 name="name"
-                                placeholder="Enter task name"
-                                value={taskData.name}
+                                placeholder="Enter project name"
+                                value={projectData.name}
                                 onChange={handleInputChange}
                             />
                         </div>
 
                         {/* Assign to User */}
                         <div className="mb-4">
-                            <Label className="mb-4" htmlFor="description">Task description</Label>
+                            <Label className="mb-4" htmlFor="description">Project description</Label>
                             <Textarea
                                 id="description"
                                 name="description"
-                                placeholder="Enter task description"
-                                value={taskData.description}
+                                placeholder="Enter project description"
+                                value={projectData.description}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -174,7 +197,7 @@ const TasksList = () => {
                                 id="deadline"
                                 name="deadline"
                                 type="date"
-                                value={taskData.deadline}
+                                value={projectData.deadline}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -183,7 +206,7 @@ const TasksList = () => {
                             <Input
                                 id="tag"
                                 name="tag"
-                                value={taskData.tag}
+                                value={projectData.tag}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -237,12 +260,11 @@ const TasksList = () => {
                         </div>
 
                         <DialogFooter>
-                            <Button type="submit" className="bg-green-500 text-white">Assign Task</Button>
+                            <Button type="submit" className="bg-green-500 text-white">Add a project</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
             </Dialog>
-
 
         </main>
     )
@@ -313,4 +335,4 @@ function PlusIcon(props) {
     )
 }
 
-export default TasksList
+export default ProjectsList

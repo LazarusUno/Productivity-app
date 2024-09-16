@@ -8,6 +8,7 @@ import Social from './pages/Social';
 import Streak from './pages/Streak';
 import TasksList from './components/TasksList';
 import SignupPage from './pages/SignupPage';
+import ProjectsList from './components/ProjectsList';
 function App() {
 
   return (
@@ -17,7 +18,7 @@ function App() {
         <Route path="signup" element={<SignupPage />} />
         <Route path="login" element={<SigninPage />} />
         <Route path="dashboard" element={<DashboardPage />}>
-          <Route index element={<TasksList />} />
+          <Route index element={<ProjectsList />} />
           <Route path="social" element={<Social />} />
           <Route path="streak" element={<Streak />} />
         </Route>
