@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-
+import { useNavigate } from 'react-router-dom'
 import { Badge } from "./ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Checkbox } from './ui/checkbox'
@@ -63,6 +63,7 @@ const users = [
 
 
 const ProjectsList = () => {
+    const navigate = useNavigate()
     const [projects, setProjects] = useState(initialProjects)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [open, setOpen] = React.useState(false)
@@ -111,6 +112,10 @@ const ProjectsList = () => {
         return text;
     }
 
+    const handleProjectClick = (projectId) => {
+        navigate(`/dashboard/projects/${projectId}/tasks`)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const updatedProjectData = {
@@ -137,14 +142,14 @@ const ProjectsList = () => {
                     </Button>
                 </div>
                 {projects.map((project) => (
-                    <Card key={project.id}>
+                    <Card key={project._id} onClick={() => handleProjectClick(project._id)} className="hover:cursor-pointer hover:bg-gray-50">
                         <CardHeader className="flex flex-row items-center space-y-0 pb-2 flex-wrap ">
                             <CardTitle className="text-lg font-semibold flex-1">{project.name}</CardTitle>
                             <Checkbox id={`project-${project.id}`} />
                         </CardHeader>
                         <CardContent className="flex-grow">
                             <p className="text-sm text-muted-foreground mb-2">
-                                {truncateDescription(project.description, 50)}
+                                {truncateDescription(project.description, 141)}
                             </p>
                         </CardContent>
                         <CardFooter className="pt-2 flex justify-between  ">

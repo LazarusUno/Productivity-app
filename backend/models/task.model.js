@@ -1,35 +1,37 @@
-import mongoose from 'mongoose';
+import mongoose, { trusted } from "mongoose";
+import Project from "./project.model";
 
-const projectSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true,
-        },
-        description: {
-            type: String,
-            required: true,
-        },
-        deadline: {
-            type: Date,
-            required: true,
-        },
-        tag: {
-            type: String,
-            required: true,
-        },
-        user: {
-            type: [String],
-            required: true,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
+const { Schema } = mongoose;
+
+const taskSchema = new Schema({
+    name: {
+        type: String,
+        required: true
     },
-    { timestamps: true }
-);
 
-const Project = mongoose.model("Project", projectSchema);
+    description: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ["To Do", "Work in progress", "Under review", "Completed"],
+        default: 'pending',
+    },
+    projectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        reg: "Project",
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    dueDate: {
+        type: Date,
+    },
 
-export default Project;
+});
+
+const Task = mongoose.model("Task", taskSchema);
+module.exports = Task;

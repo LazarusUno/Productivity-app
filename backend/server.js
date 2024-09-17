@@ -4,14 +4,15 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
 import taskRoute from "./routes/task.route.js"
+import cors from "cors"
+import Project from "./models/project.model.js";
 
 const app = express();
 const PORT = process.env.PORT || PORT;
 
 app.use(express.json());
 app.use(cookieParser());
-import cors from "cors"
-import Project from "./models/task.model.js";
+
 
 // Allow requests from the frontend origin
 app.use(

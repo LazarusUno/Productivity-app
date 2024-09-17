@@ -1,4 +1,4 @@
-import Task from '../models/task.model.js';
+import Task from '../models/project.model.js';
 
 
 export const createTask = async (req, res) => {
@@ -15,4 +15,10 @@ export const createTask = async (req, res) => {
         console.log("Error in createTask controller", error.message)
         res.status(500).json({ message: "Server error", error: error.message })
     }
+}
+
+
+export const getTasks = async () => {
+
+
 }

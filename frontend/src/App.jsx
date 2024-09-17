@@ -21,6 +21,7 @@ function App() {
           <Route index element={<ProjectsList />} />
           <Route path="social" element={<Social />} />
           <Route path="streak" element={<Streak />} />
+          <Route path="/dashboard/projects/:projectId/tasks" element={<TasksList />} />
         </Route>
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
