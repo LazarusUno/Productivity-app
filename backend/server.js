@@ -118,6 +118,8 @@ app.post("/api/projects/:projectId/tasks", async (req, res) => {
         await newTask.save();
         res.status(201)
     } catch (error) {
+        console.error("Error creating task", error);
+        console.log("Error creating task", error.message)
         res.status(500).json({ message: "Error creating task", error })
     }
 });

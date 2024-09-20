@@ -36,15 +36,15 @@ export const useTaskStore = create((set) => ({
         }));
     },
     addTask: async (projectId, taskData) => {
-        set({ loading: true });
+        set({ isLoading: true });
         try {
             const response = await axios.post(`http://localhost:5000/api/projects/${projectId}/tasks`, taskData);
             set((state) => ({
                 tasks: [...state.tasks, response.data],
-                loading: false,
+                isLoading: false,
             }));
         } catch (error) {
-            set({ error: error.message, loading: false });
+            set({ error: error.message, isLoading: false });
         }
     }
 })

@@ -145,13 +145,12 @@ const TaskColumn = ({
         }
         setNewTaskData({ ...newTaskData, assignedUsers: [...value, userValue] });
     }
-    const { addTask, loading } = useTaskStore();
+    const { addTask, isLoading } = useTaskStore();
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        // setLoading(true);
-        loading(true);
+        isLoading(true);
         if (!projectId) {
             console.error("Project ID is undefined");
             return;
@@ -160,12 +159,10 @@ const TaskColumn = ({
         try {
             // console.log("New task data: ", newTaskData);
             await addTask(projectId, newTaskData);
-            // setLoading(false);
-            loading(false);
+            isLoading(false);
         } catch (error) {
             console.error("Error adding task: ", error.message);
-            // setLoading(false);
-            loading(false);
+            isLoading(false);
         }
 
 
@@ -340,7 +337,7 @@ const TaskColumn = ({
 
                         <DialogFooter>
                             <Button type="submit" className="bg-blue-500 text-white" >
-                                Loading
+                                {/* Loading */}Add Task
                             </Button>
                         </DialogFooter>
                     </form>
