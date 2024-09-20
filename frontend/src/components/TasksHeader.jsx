@@ -5,7 +5,7 @@ import Header from './Header';
 const TasksHeader = ({ projectId }) => {
     const [projectTitle, setProjectTitle] = useState('');
 
-    // Fetch project data when component mounts or projectId changes
+
     useEffect(() => {
         const fetchProjectData = async () => {
             try {
@@ -20,16 +20,16 @@ const TasksHeader = ({ projectId }) => {
         };
 
         if (projectId) {
-            fetchProjectData(); // Fetch only if projectId is available
+            fetchProjectData();
         }
     }, [projectId]);
 
     return (
         <div className='px-4 xl:px-6'>
             <div className='pb-2 pt-2 lg:pb-1 lg:pt-3'>
-                <Header name={projectTitle || "Loading..."} /> {/* Dynamic title or a fallback */}
+                <Header name={projectTitle || "Loading..."} />
             </div>
-            s
+
             <div className='flex flex-wrap-reverse gap-2 border-y border-gray-200 dark:border-stroke-dark md:items-center'></div>
         </div>
     );

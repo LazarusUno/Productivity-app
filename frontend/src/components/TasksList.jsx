@@ -320,7 +320,7 @@ import TasksHeader from './TasksHeader'
 import Board from './Board'
 import { useParams } from 'react-router-dom'
 
-const TasksList = ({ params }) => {
+const TasksList = () => {
     const { projectId } = useParams()
     console.log(projectId)
     return (

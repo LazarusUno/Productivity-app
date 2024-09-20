@@ -36,8 +36,8 @@ const DashboardPage = () => {
                     </div>
                     <div className='flex-1'>
                         <div className='flex items-center gap-2'>
-                            <h1 className='text-lg font-semibold'>Tasks</h1>
-                            <Badge className="bg-muted text-muted-foreground">12 tasks</Badge>
+                            <h1 className='text-lg font-semibold'>Projects</h1>
+                            <Badge className="bg-muted text-muted-foreground">12 Projects</Badge>
                         </div>
                     </div>
                 </header>
