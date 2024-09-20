@@ -3,9 +3,10 @@ dotenv.config()
 import express from "express";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
-import taskRoute from "./routes/task.route.js"
 import cors from "cors"
 import Project from "./models/project.model.js";
+import Task from "./models/task.model.js"
+import mongoose from "mongoose";
 
 const app = express();
 const PORT = process.env.PORT || PORT;
@@ -25,7 +26,7 @@ app.use(
 // app.use("/api/tasks", taskRoute)
 
 app.get("/api/projects", async (req, res) => {
-    console.log("response", res)
+
     try {
         const projects = await Project.find();
         res.status(200).json(projects);
@@ -54,8 +55,74 @@ app.post("/api/projects", async (req, res) => {
     }
 })
 
+const ObjectId = mongoose.Types.ObjectId
+
+app.get("/api/projects/:projectId/tasks", async (req, res) => {
+    const { projectId } = req.params;
+    console.log("Requested projectId:", projectId); // Debugging output
+
+    try {
+        const projectExists = await Project.findById(projectId);
+        if (!projectExists) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        const objectId = new ObjectId(projectId);
+        const tasks = await Task.find({ projectId: objectId });
+
+        if (!tasks) {
+            return res.status(404).json({ message: "Tasks not found" })
+        }
+        res.status(200).json(tasks);
+    } catch (error) {
+        console.log("Error fetching tasks: ", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.get('/api/projects/:projectId', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Project.findById(projectId); // Fetch project by ID
+
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        res.json(project); // Send project data to the frontend
+    } catch (error) {
+        console.error('Error fetching project:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post("/api/projects/:projectId/tasks", async (req, res) => {
+    const { projectId } = req.params;
+    console.log("projectId", projectId)
+    const { title, description, status, points, priority, attachments, tags, assignee, author, dueDate } = req.body;
+
+    const newTask = new Task({
+        title,
+        description,
+        status,
+        priority,
+        attachments,
+        tags,
+        assignee,
+        author,
+        dueDate,
+        projectId: projectId,
+    });
+    console.log("New task", newTask)
+
+    try {
+        await newTask.save();
+        res.status(201)
+    } catch (error) {
+        res.status(500).json({ message: "Error creating task", error })
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    connectDB()
+    connectDB();
 })

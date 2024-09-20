@@ -1,31 +1,64 @@
 import mongoose, { trusted } from "mongoose";
-import Project from "./project.model";
+
 
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
-    name: {
+    title: {
         type: String,
         required: true
     },
-
     description: {
         type: String,
         required: true
     },
     status: {
         type: String,
-        enum: ["To Do", "Work in progress", "Under review", "Completed"],
-        default: 'pending',
+        enum: ['To Do', 'Work In Progress', 'Under Review', 'Completed'],
+        default: 'To Do',
     },
     projectId: {
         type: mongoose.Schema.Types.ObjectId,
         reg: "Project",
         required: true,
     },
-    createdAt: {
+    points: {
+        type: Number,
+    },
+    priority: {
+        type: String,
+        enum: ['Low', 'Medium', 'High'],
+    },
+    attachments: [
+        {
+            fileUrl: { type: String },
+            fileName: { type: String },
+        },
+    ],
+    tags: [String],
+    assignee: {
+        userId: { type: Schema.Types.ObjectId, ref: 'User' },
+        profilePictureUrl: { type: String },
+        username: { type: String },
+    },
+    author: {
+        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        profilePictureUrl: { type: String },
+        username: { type: String },
+    },
+    contribuitionType: {
+        type: String,
+        enum: ["Attended", "Support", "Own"],
+    },
+    durDate: {
         type: Date,
-        default: Date.now,
+    },
+
+    assignedTo: {
+        type: String,
+    },
+    startDate: {
+        type: Date,
     },
     dueDate: {
         type: Date,
@@ -34,4 +67,5 @@ const taskSchema = new Schema({
 });
 
 const Task = mongoose.model("Task", taskSchema);
-module.exports = Task;
+
+export default Task

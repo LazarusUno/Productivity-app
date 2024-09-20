@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { useForm, Controller } from "react-hook-form"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, EllipsisVertical } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -39,24 +39,20 @@ const initialProjects = [
 
 const users = [
     {
-        value: "next.js",
-        label: "Next.js",
+        value: "emanuel",
+        label: "Emannuel",
     },
     {
-        value: "sveltekit",
-        label: "SvelteKit",
+        value: "milkyas",
+        label: "Milkyas",
     },
     {
-        value: "nuxt.js",
-        label: "Nuxt.js",
+        value: "mercy",
+        label: "Mercy",
     },
     {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
+        value: "rediet",
+        label: "Rediet",
     },
 ]
 
@@ -145,18 +141,19 @@ const ProjectsList = () => {
                     <Card key={project._id} onClick={() => handleProjectClick(project._id)} className="hover:cursor-pointer hover:bg-gray-50">
                         <CardHeader className="flex flex-row items-center space-y-0 pb-2 flex-wrap ">
                             <CardTitle className="text-lg font-semibold flex-1">{project.name}</CardTitle>
-                            <Checkbox id={`project-${project.id}`} />
+                            {/* <Checkbox id={`project-${project.id}`} /> */}
+                            <EllipsisVertical size={18} />
                         </CardHeader>
                         <CardContent className="flex-grow">
                             <p className="text-sm text-muted-foreground mb-2">
-                                {truncateDescription(project.description, 141)}
+                                {truncateDescription(project.description, 120)}
                             </p>
                         </CardContent>
                         <CardFooter className="pt-2 flex justify-between  ">
-                            <span className="text-sm font-medium">Est. time: {project.timeEstimate}</span>
-                            <Button size="sm" variant="outline">
+                            <span className="text-sm font-medium">Deadline: {project.timeEstimate}</span>
+                            <Button onClick={() => handleProjectClick()} size="sm" variant="outline" className="bg-blue-500 text-white">
                                 <Play size={16} className="mr-2" />
-                                Start
+                                View
                             </Button>
                         </CardFooter>
                     </Card>
@@ -265,7 +262,7 @@ const ProjectsList = () => {
                         </div>
 
                         <DialogFooter>
-                            <Button type="submit" className="bg-green-500 text-white">Add a project</Button>
+                            <Button type="submit" className="bg-blue-500 text-white">Add a project</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

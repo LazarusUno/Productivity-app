@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { Button } from './ui/button'
 import { Link, Outlet } from 'react-router-dom'
+import { Clipboard, ListTodo, ShieldAlertIcon } from 'lucide-react'
 const Sidebar = () => {
 
     return (
@@ -48,6 +49,28 @@ const Sidebar = () => {
                             <SettingsIcon className="h-4 w-4" />
                             Settings
                         </Link>
+                        <Link
+                            to="/dashboard/timebox"
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                        >
+                            <ListTodo className="h-4 w-4" />
+                            Time boxing
+                        </Link>
+                        <Link
+                            to="/dashboard/admin"
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                        >
+                            <ShieldAlertIcon className="h-4 w-4" />
+                            Users
+                        </Link>
+                        <Link
+                            to="/dashboard/users/report"
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                        >
+                            <Clipboard className="h-4 w-4" />
+                            Reporting
+                        </Link>
+
                     </nav>
                 </div>
             </div>

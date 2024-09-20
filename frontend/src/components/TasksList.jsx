@@ -325,8 +325,8 @@ const TasksList = ({ params }) => {
     console.log(projectId)
     return (
         <div>
-            <TasksHeader />
-            <Board id={projectId} />
+            <TasksHeader projectId={projectId} />
+            <Board projectId={projectId} />
         </div>
     )
 }
