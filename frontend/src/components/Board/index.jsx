@@ -58,7 +58,7 @@ const Board = ({ projectId }) => {
     useEffect(() => {
         getTasks(projectId);
     }, [projectId])
-    console.log("projectID", projectId)
+    //console.log("projectID", projectId)
     const moveTask = (taskId, newStatus) => {
         console.log('before Update: ', tasks);
         const updatedTasks = tasks.map((task) =>
@@ -68,10 +68,10 @@ const Board = ({ projectId }) => {
         console.log("Updated tasks:", updatedTasks);
         setTasks(updatedTasks);
     };
-
+    // TODO: modify the Skeleton
     if (isLoading) return <Skeleton className="w-[100px] h-[20px] rounded-full" />
 
-    if (error) return <div>An error occurred while fetching tasks</div>
+    if (error) return <div className='flex justify-center items-center my-auto'>An error occurred while fetching tasks</div>
     return <DndProvider backend={HTML5Backend}>
         <div className='grid grid-cols gap-4 p-4 md:grid:cols-2 xl:grid-cols-4'>
             {taskStatus.map((status) => (
@@ -92,9 +92,7 @@ const TaskColumn = ({
     status,
     tasks,
     moveTask,
-    setIsModalNewTaskOpen,
     projectId,
-
 }) => {
     const [{ isOver }, drop] = useDrop({
         accept: 'TASK',
@@ -115,7 +113,7 @@ const TaskColumn = ({
         "Completed": "#000000"
     };
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [newTasks, setNewProjects] = useState(initialTasks)
+    // const [newTasks, setNewProjects] = useState(initialTasks)
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
     const [newTaskData, setNewTaskData] = useState({
@@ -152,7 +150,8 @@ const TaskColumn = ({
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        setLoading(true);
+        // setLoading(true);
+        loading(true);
         if (!projectId) {
             console.error("Project ID is undefined");
             return;
@@ -161,10 +160,12 @@ const TaskColumn = ({
         try {
             // console.log("New task data: ", newTaskData);
             await addTask(projectId, newTaskData);
-            setLoading(false);
+            // setLoading(false);
+            loading(false);
         } catch (error) {
             console.error("Error adding task: ", error.message);
-            setLoading(false);
+            // setLoading(false);
+            loading(false);
         }
 
 
