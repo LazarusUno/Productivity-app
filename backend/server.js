@@ -124,6 +124,25 @@ app.post("/api/projects/:projectId/tasks", async (req, res) => {
     }
 });
 
+app.patch("/api/projects/:projectId/tasks/:taskId", async (req, res) => {
+    const { projectId, taskId } = req.params;
+    const { status } = req.body;
+
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { status },
+            { new: true }
+        )
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+    } catch (error) {
+        console.error("Error updating task status", error);
+        res.status(500).json({ message: "Error updating task status", error });
+    }
+})
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     connectDB();

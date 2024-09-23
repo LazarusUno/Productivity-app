@@ -26,6 +26,7 @@ import {
 import { Skeleton } from '../ui/skeleton'
 import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
+import axios from 'axios'
 
 const taskStatus = ["To Do", "Work In Progress", "Under Review", "Completed"]
 const users = [
@@ -59,7 +60,7 @@ const Board = ({ projectId }) => {
         getTasks(projectId);
     }, [projectId])
     //console.log("projectID", projectId)
-    const moveTask = (taskId, newStatus) => {
+    const moveTask = async (taskId, newStatus) => {
         console.log('before Update: ', tasks);
         const updatedTasks = tasks.map((task) =>
             task._id === taskId ? { ...task, status: newStatus } : task
@@ -67,6 +68,12 @@ const Board = ({ projectId }) => {
 
         console.log("Updated tasks:", updatedTasks);
         setTasks(updatedTasks);
+        try {
+            await axios.patch(`http://localhost:5000/api/projects/${projectId}/tasks/${taskId}`, { status: newStatus });
+            console.log("Task status updated successfully");
+        } catch (error) {
+            console.error("Error updating task status: ", error.message)
+        }
     };
     // TODO: modify the Skeleton
     if (isLoading) return <Skeleton className="w-[100px] h-[20px] rounded-full" />
@@ -343,7 +350,6 @@ const TaskColumn = ({
                     </form>
                 </DialogContent>
             </Dialog>
-
         </div>
     )
 }
@@ -452,7 +458,7 @@ const Task = ({ task }) => {
                     </div>
                     <div className='flex items-center text-gray-500 dark:text-neutral-500'>
                         <MessageSquareMore size={20} />
-                        <span className='ml-1 text-sm dark:text-neutral-400 '>
+                        <span className='ml-1 text-sm dark:text-neutral-400'>
                             {numberOfComments}
                         </span>
                     </div>

@@ -9,8 +9,8 @@ import Streak from './pages/Streak';
 import TasksList from './components/TasksList';
 import SignupPage from './pages/SignupPage';
 import ProjectsList from './components/ProjectsList';
-import Dashboard from './pages/Calendar';
 import AdminDashboard from './pages/AdminPage';
+import CalendarComponent from './pages/Calendar';
 function App() {
 
   return (
@@ -24,7 +24,7 @@ function App() {
           <Route path="social" element={<Social />} />
           <Route path="streak" element={<Streak />} />
           <Route path="projects/:projectId/tasks" element={<TasksList />} />
-          <Route path="timebox" element={<Dashboard />} />
+          <Route path="timebox" element={<CalendarComponent />} />
           <Route path="admin" element={<AdminDashboard />} />
         </Route>
         {/* <Route path="*" element={<NoPage />} /> */}
