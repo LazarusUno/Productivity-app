@@ -7,6 +7,7 @@ import cors from "cors"
 import Project from "./models/project.model.js";
 import Task from "./models/task.model.js"
 import mongoose from "mongoose";
+import Event from "./models/event.model.js";
 
 const app = express();
 const PORT = process.env.PORT || PORT;
@@ -18,8 +19,8 @@ app.use(cookieParser());
 // Allow requests from the frontend origin
 app.use(
     cors({
-        origin: "http://localhost:5173", // Your frontend origin
-        credentials: true,               // To allow cookies with credentials
+        origin: "http://localhost:5173",
+        credentials: true,
     })
 );
 
@@ -59,7 +60,7 @@ const ObjectId = mongoose.Types.ObjectId
 
 app.get("/api/projects/:projectId/tasks", async (req, res) => {
     const { projectId } = req.params;
-    console.log("Requested projectId:", projectId); // Debugging output
+    console.log("Requested projectId:", projectId);
 
     try {
         const projectExists = await Project.findById(projectId);
@@ -142,7 +143,30 @@ app.patch("/api/projects/:projectId/tasks/:taskId", async (req, res) => {
         console.error("Error updating task status", error);
         res.status(500).json({ message: "Error updating task status", error });
     }
-})
+});
+app.post('/api/events', async (req, res) => {
+    const { title, start, end, contributionType, userId, id } = req.body;
+    if (!title || !start || !end || !contributionType || !userId) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const newEvent = new Event({
+        title,
+        start,
+        end,
+        contributionType,
+        userId, // If using multi-user, else omit i
+        id
+    });
+
+    try {
+        await newEvent.save();
+        res.status(201).json({ message: 'Event created successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create event' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     connectDB();

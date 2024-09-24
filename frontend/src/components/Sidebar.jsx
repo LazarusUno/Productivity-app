@@ -4,6 +4,8 @@ import { Button } from './ui/button'
 import { Link, Outlet } from 'react-router-dom'
 import { Clipboard, ListTodo, ShieldAlertIcon } from 'lucide-react'
 const Sidebar = () => {
+    const [projectsOpen, setProjectsOpen] = useState(false);
+    const toggleProjects = () => setProjectsOpen(!projectsOpen);
 
     return (
 
@@ -14,10 +16,10 @@ const Sidebar = () => {
                         <CalendarIcon className="h-6 w-6" />
                         <span>Productivity</span>
                     </Link>
-                    <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+                    {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                         <BellIcon className='h-4' w-4 />
                         <span className='sr-only'>Toggle notification</span>
-                    </Button>
+                    </Button> */}
                 </div>
                 <div className="flex-1 overflow-auto py-2">
                     <nav className="grid items-start px-6 text-sm font-medium">
@@ -67,6 +69,41 @@ const Sidebar = () => {
                             to="/dashboard/users/report"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                         >
+                            <Clipboard className="h-4 w-4" />
+                            Reporting
+                        </Link>
+                        <button onClick={toggleProjects} className="flex items-center gap-3 px-3 py-2 text-muted-foreground transition-all hover:text-primary">
+                            Projects
+                            <span className='text-xs'>{projectsOpen ? '▲' : '▼'}</span>
+                        </button>
+                        {projectsOpen && (
+                            <div className="ml-6 space-y-2">
+                                <Link to="/projects/1" className="block text-muted-foreground transition-all hover:text-primary">
+                                    Project 1
+                                </Link>
+                                <Link to="/projects/2" className="block text-muted-foreground transition-all hover:text-primary">
+                                    Project 2
+                                </Link>
+                                {/* Simulated project links */}
+                            </div>
+                        )}
+                        {/* Other Non-collapsible Links */}
+                        <div className="mt-2 ml-3 mb-2 text-sm text-muted-foreground font-semibold">
+                            Admin
+                        </div>
+                        <Link to="/settings" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
+                            <SettingsIcon className="h-4 w-4" />
+                            Settings
+                        </Link>
+                        <Link to="/dashboard/timebox" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
+                            <ListTodo className="h-4 w-4" />
+                            Time boxing
+                        </Link>
+                        <Link to="/dashboard/admin" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
+                            <ShieldAlertIcon className="h-4 w-4" />
+                            Users
+                        </Link>
+                        <Link to="/dashboard/users/report" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
                             <Clipboard className="h-4 w-4" />
                             Reporting
                         </Link>

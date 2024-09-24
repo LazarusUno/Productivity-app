@@ -13,6 +13,7 @@ import { SelectContent } from '@radix-ui/react-select';
 import ModalNewTask from '@/components/ModalNewEvent';
 import { Button } from '@/components/ui/button';
 import { Portal } from '@radix-ui/react-dialog';
+import axios from 'axios';
 // const localizer = momentLocalizer(moment);
 // const tasks = [
 //     { id: 1, title: 'Task 1', start: new Date(), end: new Date(), contributionType: 'own' },
@@ -56,42 +57,90 @@ import { Portal } from '@radix-ui/react-dialog';
 // };
 
 // export default CalendarComponent;
-
+const getEventColor = (contributionType) => {
+    switch (contributionType) {
+        case 'Attend': return 'bg-blue-200 text-blue-800'
+        case 'Support': return 'bg-green-100 text-green-800'
+        case 'Own': return 'bg-green-500 text-white'
+        default: return 'bg-gray-200 text-gray-800'
+    }
+}
 
 const localizer = momentLocalizer(moment);
 
 const contributionType = ['None', 'Attend', 'Support', 'Own'];
 
 const CalendarComponent = () => {
-    const [taskName, setTaskName] = useState([]);
+    const [eventName, setEventName] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const [events, setEvents] = useState('');
+    const [events, setEvents] = useState([]);
 
     const [selectedContributionType, setSelectedContributionType] = useState('');
+    // useEffect(() => {
+    //     const fetchEvents = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:5000/api/events?userId=123'); // Replace with actual userId
+    //             setEvents(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching events:', error);
+    //         }
+    //     };
+
+    //     fetchEvents();
+    // }, []);
 
     const handleSelectSlot = useCallback((slotInfo) => {
         setSelectedSlot(slotInfo)
-        setTaskName('')
+        setEventName('')
         setSelectedContributionType('')
     }, [])
-    const handleCreateTask = () => {
-        if (taskName && selectedContributionType) {
-            const newTask = {
-                id: new DAte().getTime().toString(),
-                title: `${taskName} (${selectedContributionType})`,
+
+    const handleCreateEvent = async () => {
+        if (eventName && selectedContributionType) {
+            const newEvent = {
+                id: new Date().getTime().toString(),
+                title: `${eventName} (${selectedContributionType})`,
                 start: selectedSlot.start,
-                end: selectedSlot.start,
-                contributionType: selectedContributionType
+                end: selectedSlot.end,
+                contributionType: selectedContributionType,
+                userId: '123'
             }
-            setEvents(prev => [...prev, newTask]);
-            setSelectedSlot(null)
-            setTaskName('')
-            setSelectedContributionType('')
+            console.log('Sending event:', newEvent); // Check payload
+            try {
+                const response = await axios.post('http://localhost:5000/api/events', newEvent);
+                console.log(response.data)
+                if (response.status === 201) {
+                    console.log('Event saved:', response.data);
+                    // Update state with the new event
+                    setEvents(prev => [...prev, newEvent]);
+                    // Clear inputs
+                    setSelectedSlot(null);
+                    setEventName('');
+                    setSelectedContributionType('');
+                }
+            } catch (error) {
+                if (error.response) {
+                    // Server responded with a status other than 2xx
+                    console.log('Error response data:', error.response.data);
+                    console.log('Error response status:', error.response.status);
+                } else if (error.request) {
+                    // Request was made but no response received
+                    console.log('Error request:', error.request);
+                } else {
+                    // Something else happened
+                    console.log('Error message:', error.message);
+                }
+            }
+
         }
     }
 
+    const eventStyleGetter = (event) => {
+        return {
+            className: `${getEventColor(event.contributionType)} rounded-md px-2 py-1 text-xs font-semibold`,
+        }
+    }
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('submit');
@@ -99,7 +148,6 @@ const CalendarComponent = () => {
 
     return (
         <div className="h-screen p-4 ">
-            {/* <ModalNewTask isOpen={isModal} onClose={() => setIsModal(false)} /> */}
             <Dialog open={!!selectedSlot} onOpenChange={() => setSelectedSlot(null)}>
                 <DialogContent className="min-h-[370px]"> {/* or h-[600px] or h-full */}
                     <DialogHeader>
@@ -114,8 +162,8 @@ const CalendarComponent = () => {
                                 id="name"
                                 name="name"
                                 placeholder="Enter task name"
-                                value={taskName}
-                                onChange={(e) => setTaskName(e.target.value)}
+                                value={eventName}
+                                onChange={(e) => setEventName(e.target.value)}
                             />
                         </div>
 
@@ -155,6 +203,7 @@ const CalendarComponent = () => {
                 timeslots={1}
                 style={{ height: 'calc(100vh - 100px)' }}
                 onSelectSlot={handleSelectSlot}
+                eventPropGetter={eventStyleGetter}
             />
         </div>
 

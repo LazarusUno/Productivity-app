@@ -11,6 +11,7 @@ import SignupPage from './pages/SignupPage';
 import ProjectsList from './components/ProjectsList';
 import AdminDashboard from './pages/AdminPage';
 import CalendarComponent from './pages/Calendar';
+import { ThemeProvider } from './components/ThemeProvider';
 function App() {
 
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="timebox" element={<CalendarComponent />} />
           <Route path="admin" element={<AdminDashboard />} />
         </Route>
+
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </BrowserRouter>
