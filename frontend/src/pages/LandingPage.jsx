@@ -1,3 +1,4 @@
+import { UserButton } from '@clerk/clerk-react'
 import { Target } from 'lucide-react'
 import { Rocket } from 'lucide-react'
 import { Github, Twitter, Zap, LayoutDashboard, KeyRound, Users, Bell, Sparkles } from 'lucide-react'
@@ -25,6 +26,7 @@ export default function LandingPage() {
                         />
                     ))}
                 </div>
+            <UserButton/>
 
                 <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
                     {/* Logo */}
@@ -58,13 +60,14 @@ export default function LandingPage() {
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a
-                            href="/dashboard"
-                            className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-200 transition-colors"
-                        >
-                            Get Started
-                            <span className="ml-2">→</span>
-                        </a>
+                    <a
+  href="/login" // change this from "/dashboard" to "/login"
+  className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-200 transition-colors"
+>
+  Get Started
+  <span className="ml-2">→</span>
+</a>
+
                         <a
                             href="#"
                             className="px-6 py-3 rounded-full bg-gray-800 font-semibold hover:bg-gray-700 transition-colors inline-flex items-center justify-center"

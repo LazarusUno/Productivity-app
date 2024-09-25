@@ -136,3 +136,10 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height to center vertically */
+  background-color: #6a0dad; /* Purple background */
+}

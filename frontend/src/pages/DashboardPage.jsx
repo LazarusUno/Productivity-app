@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/components/ThemeProvider"
+import { OrganizationSwitcher, UserButton } from '@clerk/clerk-react'
 
 
 const DashboardPage = () => {
@@ -52,6 +53,12 @@ const DashboardPage = () => {
                             <Badge className="bg-muted text-muted-foreground">12 Projects</Badge>
                         </div>
                     </div>
+                    <div flex items-center gap-20>
+
+                    <OrganizationSwitcher />
+                    </div>
+
+                    <UserButton afterSignOutUrl="/" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="icon">
