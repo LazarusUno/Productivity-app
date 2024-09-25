@@ -5,7 +5,6 @@ import { MenuIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Moon, Sun } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,7 +15,6 @@ import {
 import { useTheme } from "@/components/ThemeProvider"
 import { OrganizationSwitcher, UserButton } from '@clerk/clerk-react'
 
-
 const DashboardPage = () => {
     const { setTheme } = useTheme()
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,11 +22,11 @@ const DashboardPage = () => {
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
     };
+
     return (
-        <div className=' relative min-h-screen w-full lg:grid lg:grid-cols-[280px_1fr]'>
+        <div className='relative min-h-screen w-full lg:grid lg:grid-cols-[280px_1fr]'>
             <div
-                className={`fixed inset-y-0 h-full  left-0 z-50 w-64 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0  bg-muted p-4 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                    }`}
+                className={`fixed inset-y-0 h-full left-0 z-50 w-64 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 bg-muted p-4 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <Sidebar />
             </div>
@@ -47,18 +45,15 @@ const DashboardPage = () => {
                             <MenuIcon className="h-6 w-6" />
                         </button>
                     </div>
-                    <div className='flex-1'>
+                    <div className='flex-1 flex items-center justify-between'>
                         <div className='flex items-center gap-2'>
                             <h1 className='text-lg font-semibold'>Projects</h1>
                             <Badge className="bg-muted text-muted-foreground">12 Projects</Badge>
                         </div>
-                    </div>
-                    <div flex items-center gap-20>
-
-                    <OrganizationSwitcher />
+                        <OrganizationSwitcher />
+                        <UserButton afterSignOutUrl="/" />
                     </div>
 
-                    <UserButton afterSignOutUrl="/" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="icon">
@@ -82,9 +77,8 @@ const DashboardPage = () => {
                 </header>
                 <Outlet />
             </div>
-
         </div>
     )
 }
 
-export default DashboardPage
+export default DashboardPage;
