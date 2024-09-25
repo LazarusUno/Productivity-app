@@ -26,8 +26,10 @@ export default function LandingPage() {
                         />
                     ))}
                 </div>
-            <UserButton/>
-
+            
+            <div className="absolute top-4 right-4 z-20">
+                <UserButton />
+            </div>
                 <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
                     {/* Logo */}
                     <div className="mb-8">
