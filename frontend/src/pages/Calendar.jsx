@@ -1,237 +1,359 @@
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useCallback, useState } from 'react';
-import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+'use client'
 
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { SelectValue } from '@radix-ui/react-select';
-import { SelectContent } from '@radix-ui/react-select';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
+import moment from 'moment'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
+import { useCallback, useState, useEffect } from 'react'
+import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 
-import ModalNewTask from '@/components/ModalNewEvent';
-import { Button } from '@/components/ui/button';
-import { Portal } from '@radix-ui/react-dialog';
-import axios from 'axios';
-// const localizer = momentLocalizer(moment);
-// const tasks = [
-//     { id: 1, title: 'Task 1', start: new Date(), end: new Date(), contributionType: 'own' },
-//     { id: 2, title: 'Task 2', start: new Date(), end: new Date(), contributionType: 'support' }
-// ];
+const localizer = momentLocalizer(moment)
 
-// const contributionType = ['None', 'Attend', 'Support', 'Own']
+const initialContributionTypes = ['None', 'Attend', 'Support', 'Own']
 
-// const CalendarComponent = () => {
-//     const [events, setEvents] = useState([])
-//     const [selectedSlot, setSelectedSlot] = useState(null)
-//     const [taskName, setTaskName] = useState('')
-//     const [selectedContributionType, setSelectedContributionType] = useState('')
-//     const handleSelectSlot = useCallback((slotInfo) => {
-//         setSelectedSlot(slotInfo)
-//         setTaskName('')
-//         setSelectedContributionType('')
-//     }, [])
-//     const [isModalOpen, setIsModalOpen] = useState(false)
-
-//     return (
-//         <div className='h-screen p-4'>
-//             <div>
-//                 <Calendar
-//                     selectable
-//                     localizer={localizer}
-//                     events={events}
-//                     defaultView="week"
-//                     views={['week', 'day']}
-//                     step={30}  // 30 minute intervals
-//                     timeslots={1}
-//                     style={{ height: 'calc(100vh - 100px)' }}
-//                     onSelectSlot={() => setIsModalOpen(true)}
-//                 />
-//             </div>
-
-
-//         </div>
-
-//     );
-// };
-
-// export default CalendarComponent;
-const getEventColor = (contributionType) => {
-    switch (contributionType) {
-        case 'Attend': return 'bg-blue-200 text-blue-800'
-        case 'Support': return 'bg-green-100 text-green-800'
-        case 'Own': return 'bg-green-500 text-white'
-        default: return 'bg-gray-200 text-gray-800'
-    }
+const getEventColor = (event) => {
+  if (event.completed) return 'bg-green-500 dark:bg-green-700 text-white'
+  if (moment(event.end).isBefore(moment())) return 'bg-red-500 dark:bg-red-700 text-white'
+  return 'bg-blue-500 dark:bg-blue-700 text-white'
 }
 
-const localizer = momentLocalizer(moment);
+const holidays = [
+  { date: '2024-01-01', name: 'New Year\'s Day' },
+  { date: '2024-12-25', name: 'Christmas Day' },
+  // Add more holidays here
+]
 
-const contributionType = ['None', 'Attend', 'Support', 'Own'];
+export default function EnhancedInteractiveCalendar() {
+  const [events, setEvents] = useState([])
+  const [selectedSlot, setSelectedSlot] = useState(null)
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [eventName, setEventName] = useState('')
+  const [selectedContributionType, setSelectedContributionType] = useState('')
+  const [customContributionType, setCustomContributionType] = useState('')
+  const [contributionTypes, setContributionTypes] = useState(initialContributionTypes)
+  const [progress, setProgress] = useState({})
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [currentView, setCurrentView] = useState(Views.MONTH)
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
+  const [updateMessage, setUpdateMessage] = useState('')
+  const [updateType, setUpdateType] = useState('team')
+  const [completionStatus, setCompletionStatus] = useState(false)
+  const [issuesFaced, setIssuesFaced] = useState('')
 
-const CalendarComponent = () => {
-    const [eventName, setEventName] = useState([]);
-    const [selectedSlot, setSelectedSlot] = useState(null);
-    const [events, setEvents] = useState([]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateProgress()
+      updateEventStatus()
+    }, 60000) // Update every minute
 
-    const [selectedContributionType, setSelectedContributionType] = useState('');
-    // useEffect(() => {
-    //     const fetchEvents = async () => {
-    //         try {
-    //             const response = await axios.get('http://localhost:5000/api/events?userId=123'); // Replace with actual userId
-    //             setEvents(response.data);
-    //         } catch (error) {
-    //             console.error('Error fetching events:', error);
-    //         }
-    //     };
+    return () => clearInterval(interval)
+  }, [events])
 
-    //     fetchEvents();
-    // }, []);
+  const updateProgress = () => {
+    const now = moment()
+    const progressData = {}
 
-    const handleSelectSlot = useCallback((slotInfo) => {
-        setSelectedSlot(slotInfo)
-        setEventName('')
-        setSelectedContributionType('')
-    }, [])
-
-    const handleCreateEvent = async () => {
-        if (eventName && selectedContributionType) {
-            const newEvent = {
-                id: new Date().getTime().toString(),
-                title: `${eventName} (${selectedContributionType})`,
-                start: selectedSlot.start,
-                end: selectedSlot.end,
-                contributionType: selectedContributionType,
-                userId: '123'
-            }
-            console.log('Sending event:', newEvent); // Check payload
-            try {
-                const response = await axios.post('http://localhost:5000/api/events', newEvent);
-                console.log(response.data)
-                if (response.status === 201) {
-                    console.log('Event saved:', response.data);
-                    // Update state with the new event
-                    setEvents(prev => [...prev, newEvent]);
-                    // Clear inputs
-                    setSelectedSlot(null);
-                    setEventName('');
-                    setSelectedContributionType('');
-                }
-            } catch (error) {
-                if (error.response) {
-                    // Server responded with a status other than 2xx
-                    console.log('Error response data:', error.response.data);
-                    console.log('Error response status:', error.response.status);
-                } else if (error.request) {
-                    // Request was made but no response received
-                    console.log('Error request:', error.request);
-                } else {
-                    // Something else happened
-                    console.log('Error message:', error.message);
-                }
-            }
-
-        }
+    // Calculate progress for each day in the current month
+    const daysInMonth = now.daysInMonth()
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = moment(now).date(day)
+      const dayTasks = events.filter(event => moment(event.start).isSame(date, 'day'))
+      const completed = dayTasks.filter(event => event.completed).length
+      const total = dayTasks.length
+      progressData[date.format('YYYY-MM-DD')] = total > 0 ? (completed / total) * 100 : 0
     }
 
-    const eventStyleGetter = (event) => {
-        return {
-            className: `${getEventColor(event.contributionType)} rounded-md px-2 py-1 text-xs font-semibold`,
-        }
+    setProgress(progressData)
+  }
+
+  const updateEventStatus = () => {
+    const now = moment()
+    setEvents(prevEvents => prevEvents.map(event => ({
+      ...event,
+      completed: event.completed || moment(event.end).isBefore(now)
+    })))
+  }
+
+  const handleSelectSlot = useCallback((slotInfo) => {
+    setSelectedSlot(slotInfo)
+    setEventName('')
+    setSelectedContributionType('')
+    setCustomContributionType('')
+    setCompletionStatus(false)
+    setIssuesFaced('')
+    setIsDialogOpen(true)
+  }, [])
+
+  const handleSelectEvent = useCallback((event) => {
+    setSelectedEvent(event)
+    setEventName(event.title)
+    setSelectedContributionType(event.contributionType)
+    setCompletionStatus(event.completed)
+    setIssuesFaced(event.issuesFaced || '')
+    setIsDialogOpen(true)
+  }, [])
+
+  const handleCreateEvent = () => {
+    if (eventName && selectedSlot && (selectedContributionType || customContributionType)) {
+      const contributionType = customContributionType || selectedContributionType
+      const newEvent = {
+        id: new Date().getTime().toString(),
+        title: eventName,
+        start: selectedSlot.start,
+        end: selectedSlot.end,
+        contributionType: contributionType,
+        completed: completionStatus,
+        issuesFaced: issuesFaced,
+        userId: '123'
+      }
+
+      setEvents(prev => [...prev, newEvent])
+      setIsDialogOpen(false)
+      setSelectedSlot(null)
+      setEventName('')
+      setSelectedContributionType('')
+      setCustomContributionType('')
+      setCompletionStatus(false)
+      setIssuesFaced('')
+      updateProgress()
     }
+  }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('submit');
-    };
+  const handleUpdateEvent = () => {
+    if (selectedEvent) {
+      setEvents(prev => prev.map(event => 
+        event.id === selectedEvent.id ? { 
+          ...selectedEvent, 
+          title: eventName, 
+          contributionType: selectedContributionType || customContributionType,
+          completed: completionStatus,
+          issuesFaced: issuesFaced
+        } : event
+      ))
+      setIsDialogOpen(false)
+      setSelectedEvent(null)
+      setEventName('')
+      setSelectedContributionType('')
+      setCustomContributionType('')
+      setCompletionStatus(false)
+      setIssuesFaced('')
+      updateProgress()
+    }
+  }
 
-    return (
-        <div className="h-screen p-4 ">
-            <Dialog open={!!selectedSlot} onOpenChange={() => setSelectedSlot(null)}>
-                <DialogContent className="min-h-[370px]"> {/* or h-[600px] or h-full */}
-                    <DialogHeader>
-                        <DialogTitle>Create Task</DialogTitle>
-                    </DialogHeader>
+  const eventStyleGetter = (event) => {
+    return {
+      className: `${getEventColor(event)} rounded-md px-2 py-1 text-xs font-semibold`,
+    }
+  }
 
-                    <form onSubmit={handleSubmit}>
-                        {/* Project Name */}
-                        <div className="mb-4">
-                            <Label htmlFor="name">Task name</Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                placeholder="Enter task name"
-                                value={eventName}
-                                onChange={(e) => setEventName(e.target.value)}
-                            />
-                        </div>
+  const EventComponent = ({ event }) => (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="truncate">{event.title}</div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div>
+            <p><strong>Task:</strong> {event.title}</p>
+            <p><strong>Type:</strong> {event.contributionType}</p>
+            <p><strong>Start:</strong> {moment(event.start).format('LT')}</p>
+            <p><strong>End:</strong> {moment(event.end).format('LT')}</p>
+            <p><strong>Status:</strong> {event.completed ? 'Completed' : 'In Progress'}</p>
+            {event.issuesFaced && <p><strong>Issues:</strong> {event.issuesFaced}</p>}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
 
-                        <div className='mb-4'>
-                            <Label htmlFor="contributionType">Contribution Type</Label>
-                            <Select onValueChange={setSelectedContributionType} value={selectedContributionType}>
-                                <SelectTrigger id="contributionType">
-                                    <SelectValue placeholder="Select contribution type" />
-                                </SelectTrigger>
-                                <SelectContent style={{ zIndex: 9999 }}>
+  const handleSendUpdate = () => {
+    console.log(`Sending ${updateType} update: ${updateMessage}`)
+    // Here you would typically send this update to a server
+    setIsUpdateDialogOpen(false)
+    setUpdateMessage('')
+    setUpdateType('team')
+  }
 
-                                    {contributionType.map((type) => (
-                                        <SelectItem key={type} value={type}>
-                                            {type}
-                                        </SelectItem>
-                                    ))}
+  return (
+    <div className="h-screen p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <div className="mb-4 grid grid-cols-3 gap-4">
+        <ProgressBar label="Daily Progress" value={progress[moment().format('YYYY-MM-DD')] || 0} color="bg-green-500" />
+        <ProgressBar label="Weekly Progress" value={Object.values(progress).reduce((acc, val) => acc + val, 0) / 7} color="bg-yellow-500" />
+        <ProgressBar label="Monthly Progress" value={Object.values(progress).reduce((acc, val) => acc + val, 0) / Object.keys(progress).length} color="bg-red-500" />
+      </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{selectedEvent ? 'Update Task' : 'Create Task'}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="mb-4">
+              <Label htmlFor="name" className="text-sm font-medium">Task name</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Enter task name"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className='mb-4'>
+              <Label htmlFor="contributionType" className="text-sm font-medium">Contribution Type</Label>
+              <Select onValueChange={setSelectedContributionType} value={selectedContributionType}>
+                <SelectTrigger id="contributionType" className="mt-1">
+                  <SelectValue placeholder="Select or enter new type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {contributionTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom">Custom Type</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedContributionType === 'custom' && (
+              <div className="mb-4">
+                <Label htmlFor="customType" className="text-sm font-medium">Custom Type</Label>
+                <Input
+                  id="customType"
+                  name="customType"
+                  placeholder="Enter custom type"
+                  value={customContributionType}
+                  onChange={(e) => setCustomContributionType(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+            )}
+            <div className="mb-4">
+              <Label htmlFor="completionStatus" className="text-sm font-medium">Completion Status</Label>
+              <div className="flex items-center mt-1">
+                <Switch
+                  id="completionStatus"
+                  checked={completionStatus}
+                  onCheckedChange={setCompletionStatus}
+                />
+                <Label htmlFor="completionStatus" className="ml-2">
+                  {completionStatus ? 'Completed' : 'In Progress'}
+                </Label>
+              </div>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="issuesFaced" className="text-sm font-medium">Issues Faced</Label>
+              <Textarea
+                id="issuesFaced"
+                placeholder="Enter any issues faced"
+                value={issuesFaced}
+                onChange={(e) => setIssuesFaced(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            {selectedSlot && (
+              <div className="mb-4">
+                <Label className="text-sm font-medium">Selected Time</Label>
+                <p className="mt-1 text-sm">
+                  {`${moment(selectedSlot.start).format('MMMM D, YYYY h:mm A')} - ${moment(selectedSlot.end).format('h:mm A')}`}
+                </p>
+              </div>
+            )}
+            <DialogFooter>
+              <Button 
+                onClick={selectedEvent ? handleUpdateEvent : handleCreateEvent} 
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                {selectedEvent ? 'Update Task' : 'Add Task'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <div className="rounded-lg overflow-hidden shadow-lg mb-4">
+        <Calendar
+          selectable
+          localizer={localizer}
+          events={events}
+          defaultView={currentView}
+          views={[Views.MONTH, Views.WEEK, Views.DAY]}
+          step={30}
+          timeslots={2}
+          style={{ height: 'calc(100vh - 300px)' }}
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleSelectEvent}
+          eventPropGetter={eventStyleGetter}
+          components={{
+            event: EventComponent
+          }}
+          className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          dayLayoutAlgorithm="no-overlap"
+          dayPropGetter={(date) => ({
+            className: `relative ${moment(date).isBefore(moment(), 'day') ? 'bg-gray-100 dark:bg-gray-700' : ''}`,
+          })}
+          onView={setCurrentView}
+          formats={{
+            dayFormat: (date, culture, localizer) => 
+              localizer.format(date, 'D', culture) +
+              (holidays.some(holiday => holiday.date === moment(date).format('YYYY-MM-DD')) 
+                ? ' •' 
+                : '')
+          }}
+        />
+      </div>
+      <Button onClick={() => setIsUpdateDialogOpen(true)} className="w-full">Send Update</Button>
+      <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+        <DialogContent className="bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Send Update</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="mb-4">
+              <Label htmlFor="updateType" className="text-sm font-medium">Update Type</Label>
+              <Select onValueChange={setUpdateType} value={updateType}>
+                <SelectTrigger id="updateType" className="mt-1">
+                  <SelectValue placeholder="Select update type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="team">Team Update</SelectItem>
+                  <SelectItem value="admin">Admin Update</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="updateMessage" className="text-sm font-medium">Update Message</Label>
+              <Textarea
+                id="updateMessage"
+                placeholder="Enter your update message"
+                value={updateMessage}
+                onChange={(e) => setUpdateMessage(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <DialogFooter>
+              <Button onClick={handleSendUpdate} className="bg-blue-500 hover:bg-blue-600 text-white">
+                Send Update
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
 
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <DialogFooter>
-                            <Button type="submit" onClick={handleCreateEvent} className="bg-blue-500 text-white" >
-                                Add Task
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
-            <Calendar
-                selectable
-                localizer={localizer}
-                events={events}
-                defaultView="week"
-                views={['week', 'day']}
-                step={30}
-                timeslots={1}
-                style={{ height: 'calc(100vh - 100px)' }}
-                onSelectSlot={handleSelectSlot}
-                eventPropGetter={eventStyleGetter}
-            />
-        </div>
-
-    );
-};
-export default CalendarComponent;
-
-// const Modal = ({ isOpen, onClose, title, children, onSubmit }) => {
-//     return (
-//         <Dialog open={isOpen} onOpenChange={onClose}>
-//             <DialogContent>
-//                 <DialogHeader>
-//                     <DialogTitle>{title}</DialogTitle>
-//                 </DialogHeader>
-
-//                 {/* Body Content */}
-//                 <div className='space-y-4'>
-//                     {children}
-//                 </div>
-
-//                 {/* Footer Actions */}
-//                 <DialogFooter>
-//                     <Button variant="secondary" onClick={onClose}>Cancel</Button>
-//                     <Button className="bg-blue-500 text-white" onClick={onSubmit}>Submit</Button>
-//                 </DialogFooter>
-//             </DialogContent>
-//         </Dialog>
-//     );
-// };
-
-
+function ProgressBar({ label, value, color }) {
+  return (
+    <div>
+      <Label className="text-sm font-medium mb-1">{label}</Label>
+      <Progress value={value} className={`h-2 ${color}`} />
+    </div>
+  )
+}
